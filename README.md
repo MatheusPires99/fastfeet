@@ -8,6 +8,6 @@
 
 Repositório criado para armazenar o projeto FastFeet do Bootcamp GoStack 10.0, trabalhando com Node.js, ReactJS e React Native.
 
-## DESAFIOS CONCLUÍDOS:
+## Desafios Concluídos:
 
 ### Back-end: [[ir para projeto](https://github.com/MatheusPires99)]
