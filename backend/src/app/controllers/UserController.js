@@ -2,6 +2,12 @@ import * as Yup from "yup";
 import User from "../models/User";
 
 class UserController {
+  async index(req, res) {
+    const users = await User.findAll();
+
+    return res.json(users);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
@@ -34,7 +40,28 @@ class UserController {
   }
 
   async update(req, res) {
-    return res.json({ ok: true });
+    const schema = Yup.object().shape({
+      name: Yup.string(),
+      email: Yup.string().email(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: "Field validation fails" });
+    }
+
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) {
+      return res.status(400).json({ erro: "User already exist" });
+    }
+
+    const { id, name, email } = await user.update(req.body);
+
+    return res.json({
+      id,
+      name,
+      email,
+    });
   }
 }
 
