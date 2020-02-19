@@ -1,21 +1,10 @@
 import * as Yup from "yup";
-import User from "../models/User";
 import Deliveryman from "../models/Deliveryman";
 import File from "../models/File";
 
 class DeliverymanController {
   async index(req, res) {
-    const checkUserAdmin = await User.findOne({
-      where: { id: req.userId, admin: true },
-    });
-
-    if (!checkUserAdmin) {
-      return res
-        .status(401)
-        .json({ error: "Only admins can view all deliverymans" });
-    }
-
-    const deliveryman = await Deliveryman.findAll({
+    const deliverymans = await Deliveryman.findAll({
       attributes: ["id", "name", "email"],
       include: [
         {
@@ -26,23 +15,34 @@ class DeliverymanController {
       ],
     });
 
+    return res.json(deliverymans);
+  }
+
+  async show(req, res) {
+    const deliveryman = await Deliveryman.findByPk(req.params.id, {
+      attributes: ["id", "name", "email"],
+      include: [
+        {
+          model: File,
+          as: "avatar",
+          attributes: ["name", "path", "url"],
+        },
+      ],
+    });
+
+    if (!deliveryman) {
+      return res.status(400).json({ error: "Deliveryman not found" });
+    }
+
     return res.json(deliveryman);
   }
 
   async store(req, res) {
-    const checkUserAdmin = await User.findOne({
-      where: { id: req.userId, admin: true },
-    });
-
-    if (!checkUserAdmin) {
-      return res
-        .status(401)
-        .json({ error: "Only admins can create new deliverymans" });
-    }
-
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      email: Yup.string().required(),
+      email: Yup.string()
+        .email()
+        .required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -57,9 +57,10 @@ class DeliverymanController {
       return res.status(401).json({ error: "Deliveryman already exist" });
     }
 
-    const { name, email, avatar_id } = await Deliveryman.create(req.body);
+    const { id, name, email, avatar_id } = await Deliveryman.create(req.body);
 
     return res.json({
+      id,
       name,
       email,
       avatar_id,
@@ -67,16 +68,6 @@ class DeliverymanController {
   }
 
   async update(req, res) {
-    const checkUserAdmin = await User.findOne({
-      where: { id: req.userId, admin: true },
-    });
-
-    if (!checkUserAdmin) {
-      return res
-        .status(401)
-        .json({ error: "Only admins can update deliverymans" });
-    }
-
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string(),
@@ -86,32 +77,40 @@ class DeliverymanController {
       return res.status(400).json({ error: "Validation fails" });
     }
 
-    const deliveryman = await Deliveryman.findByPk(req.body.id);
+    const deliveryman = await Deliveryman.findByPk(req.params.id, {
+      where: { status: true },
+    });
 
     if (!deliveryman) {
       return res.status(400).json({ error: "Delivery not found" });
     }
 
-    const { name, email } = await deliveryman.update(req.body);
+    const { email } = req.body;
+
+    if (email && email !== deliveryman.email) {
+      const deliverymanExists = await Deliveryman.findOne({ where: { email } });
+
+      if (deliverymanExists) {
+        return res
+          .status(401)
+          .json({ error: "This e-mail is already in use!" });
+      }
+    }
+
+    const { id, avatar_id, name } = await deliveryman.update(req.body);
 
     return res.json({
+      id,
       name,
       email,
+      avatar_id,
     });
   }
 
   async delete(req, res) {
-    const checkUserAdmin = await User.findOne({
-      where: { id: req.userId, admin: true },
+    const deliveryman = await Deliveryman.findByPk(req.params.id, {
+      where: { status: true },
     });
-
-    if (!checkUserAdmin) {
-      return res
-        .status(401)
-        .json({ error: "Only admins can delete deliverymans" });
-    }
-
-    const deliveryman = await Deliveryman.findByPk(req.params.id);
 
     if (!deliveryman) {
       return res.status(400).json({ error: "Deliveryman not found" });
