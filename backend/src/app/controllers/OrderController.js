@@ -1,5 +1,4 @@
 import * as Yup from "yup";
-
 import {
   startOfHour,
   setHours,
@@ -12,19 +11,24 @@ import Order from "../models/Order";
 import Recipient from "../models/Recipient";
 import Deliveryman from "../models/Deliveryman";
 import File from "../models/File";
-import Notification from "../schemas/Notification";
+// import Notification from "../schemas/Notification";
+
+import mail from "../../lib/Mail";
 
 class OrderController {
   async index(req, res) {
     const { page = 1 } = req.query;
 
     const order = await Order.findAll({
+      where: {
+        canceled_at: null,
+      },
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
-      order: ["start_date"],
+      order: [["id", "DESC"]],
       limit: 10,
-      offset: (page - 1) * 20,
+      offset: (page - 1) * 10,
       include: [
         {
           model: Recipient,
@@ -58,15 +62,15 @@ class OrderController {
     return res.json(order);
   }
 
-  // async show(res, req) {
-  //   const order = await Order.findByPk(req.params.id);
+  async show(res, req) {
+    const order = await Order.findByPk(req.params.id);
 
-  //   if (!order) {
-  //     return res.status(401).json({ error: "Order not found" });
-  //   }
+    if (!order) {
+      return res.status(401).json({ error: "Order not found" });
+    }
 
-  //   return res.json(order);
-  // }
+    return res.json(order);
+  }
 
   async store(req, res) {
     const schema = Yup.object().shape({
@@ -106,13 +110,28 @@ class OrderController {
       deliveryman_id,
     });
 
-    // Notify deliveryman
-    const recipient = await Recipient.findByPk(recipient_id);
-
-    await Notification.create({
-      content: `Nova entrega de ${recipient.name}`,
-      user: deliveryman_id,
+    await mail.sendMail({
+      to: `${deliverymanExist.name} <${deliverymanExist.email}>`,
+      subject: "Nova entrega",
+      template: "order",
+      context: {
+        deliveryman: deliverymanExist.name,
+        product: order.product,
+        recipient: recipientExist.name,
+        street: recipientExist.street,
+        number: recipientExist.number,
+        city: recipientExist.city,
+        state: recipientExist.state,
+      },
     });
+
+    // Notify deliveryman
+    // const recipient = await Recipient.findByPk(recipient_id);
+
+    // await Notification.create({
+    //   content: `Nova entrega para ${recipient.name}`,
+    //   user: deliveryman_id,
+    // });
 
     return res.json(order);
   }
@@ -144,8 +163,8 @@ class OrderController {
       return res.status(400).json({ error: "Past dates are not permitted" });
     }
 
-    const start_hour = setHours(new Date(), 8);
-    const end_hour = setHours(new Date(), 18);
+    const start_hour = setHours(formattedStartDate, 8);
+    const end_hour = setHours(formattedStartDate, 18);
 
     if (
       !isWithinInterval(formattedStartDate, {
@@ -166,7 +185,25 @@ class OrderController {
 
     const { id, product } = await order.update(req.body);
 
-    return res.json({ id, product, formattedStartDate, formattedEndDate });
+    return res.json({ id, product, start_date, end_date });
+  }
+
+  async delete(req, res) {
+    const order = await Order.findOne({
+      where: { id: req.params.id, canceled_at: null },
+    });
+
+    if (!order) {
+      return res
+        .status(401)
+        .json({ error: "Order does not exists or is already canceled" });
+    }
+
+    order.canceled_at = new Date();
+
+    await order.save();
+
+    return res.json(order);
   }
 }
 
