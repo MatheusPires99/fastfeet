@@ -13,7 +13,8 @@ import Deliveryman from "../models/Deliveryman";
 import File from "../models/File";
 // import Notification from "../schemas/Notification";
 
-import mail from "../../lib/Mail";
+import NewOrderMail from "../jobs/NewOrderMail";
+import Queue from "../../lib/Queue";
 
 class OrderController {
   async index(req, res) {
@@ -27,8 +28,8 @@ class OrderController {
         exclude: ["createdAt", "updatedAt"],
       },
       order: [["id", "DESC"]],
-      limit: 10,
-      offset: (page - 1) * 10,
+      limit: 20,
+      offset: (page - 1) * 20,
       include: [
         {
           model: Recipient,
@@ -110,19 +111,10 @@ class OrderController {
       deliveryman_id,
     });
 
-    await mail.sendMail({
-      to: `${deliverymanExist.name} <${deliverymanExist.email}>`,
-      subject: "Nova entrega",
-      template: "order",
-      context: {
-        deliveryman: deliverymanExist.name,
-        product: order.product,
-        recipient: recipientExist.name,
-        street: recipientExist.street,
-        number: recipientExist.number,
-        city: recipientExist.city,
-        state: recipientExist.state,
-      },
+    await Queue.add(NewOrderMail.key, {
+      deliverymanExist,
+      recipientExist,
+      order,
     });
 
     // Notify deliveryman

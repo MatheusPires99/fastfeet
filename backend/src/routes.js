@@ -9,6 +9,8 @@ import CepController from "./app/controllers/CepController";
 import DeliverymanController from "./app/controllers/DeliverymanController";
 import FileController from "./app/controllers/FileController";
 import OrderController from "./app/controllers/OrderController";
+import DeliveryController from "./app/controllers/DeliveryController";
+import DeliveredOrderController from "./app/controllers/DeliveredOrderController";
 
 import authMiddleware from "./app/middleware/auth";
 import adminAuthMiddleware from "./app/middleware/adminAuth";
@@ -25,6 +27,10 @@ routes.use(authMiddleware);
 
 routes.get("/users", UserController.index);
 routes.put("/users/:id", UserController.update);
+
+routes.get("/deliverymans/:id/deliveries", DeliveryController.index);
+
+routes.get("/deliverymans/:id/delivered", DeliveredOrderController.index);
 
 routes.use(adminAuthMiddleware);
 
