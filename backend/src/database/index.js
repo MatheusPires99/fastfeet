@@ -6,10 +6,11 @@ import Recipiet from "../app/models/Recipient";
 import Deliveryman from "../app/models/Deliveryman";
 import File from "../app/models/File";
 import Order from "../app/models/Order";
+import DeliveryProblems from "../app/models/DeliveryProblems";
 
 import databaseConfig from "../config/database";
 
-const models = [User, Recipiet, Order, Deliveryman, File];
+const models = [User, Recipiet, Order, Deliveryman, File, DeliveryProblems];
 
 class Datebase {
   constructor() {

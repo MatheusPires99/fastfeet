@@ -1,0 +1,110 @@
+import * as Yup from "yup";
+
+import Order from "../models/Order";
+import Recipient from "../models/Recipient";
+import Deliveryman from "../models/Deliveryman";
+import DeliveryProblems from "../models/DeliveryProblems";
+
+class DeliveryProblemsController {
+  async index(req, res) {
+    const problems = await DeliveryProblems.findAll({
+      attributes: ["id", "description"],
+      include: [
+        {
+          model: Order,
+          as: "order",
+          attributes: ["id", "product"],
+          include: [
+            {
+              model: Recipient,
+              as: "recipient",
+              attributes: ["id", "name"],
+            },
+            {
+              model: Deliveryman,
+              as: "deliveryman",
+              attributes: ["id", "name", "email"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!problems) {
+      return res.status(400).json({ error: "None delivery problems found" });
+    }
+
+    return res.json(problems);
+  }
+
+  async show(req, res) {
+    const orderProblem = await DeliveryProblems.findAll({
+      where: { order_id: req.params.id },
+      attributes: ["id", "description"],
+    });
+
+    if (!orderProblem) {
+      return res.status(401).json({ error: "Order not found" });
+    }
+
+    return res.json(orderProblem);
+  }
+
+  async store(req, res) {
+    const schema = Yup.object().shape({
+      description: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: "Validation fails" });
+    }
+
+    const { description } = req.body;
+
+    const { id, order_id } = await DeliveryProblems.create({
+      order_id: req.params.id,
+      description,
+    });
+
+    return res.json({
+      id,
+      order_id,
+      description,
+    });
+  }
+
+  async delete(req, res) {
+    const order_problem = await DeliveryProblems.findByPk(req.params.id, {
+      where: { createdAt: null },
+      attributes: ["id", "product", "start_date", "end_date", "createdAt"],
+    });
+
+    if (!order_problem) {
+      return res.status(401).json({ error: "Order problem not found" });
+    }
+
+    const { order_id } = order_problem;
+
+    if (!order_id) {
+      return res.status(401).json({ error: "Order not found" });
+    }
+
+    const order = await Order.findByPk(order_id, {
+      where: { canceled_at: null },
+    });
+
+    if (!order) {
+      return res
+        .status(401)
+        .json({ error: "Order does not exists or is already canceled" });
+    }
+
+    order.canceled_at = new Date();
+
+    await order.save();
+
+    return res.json(order);
+  }
+}
+
+export default new DeliveryProblemsController();
