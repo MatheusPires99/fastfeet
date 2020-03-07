@@ -1,16 +1,14 @@
+require("dotenv/config");
+
 module.exports = {
   dialect: "postgres",
-  host: "localhost",
-  username: "postgres",
-  password: "fastfeet",
-  database: "fastfeet",
+  host: process.env.DB_HOST,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
   define: {
     timestamps: true,
     underscored: true,
     underscoredAll: true,
   },
-  dialectOptions: {
-    useUTC: false,
-  },
-  timezone: "-03:00",
 };

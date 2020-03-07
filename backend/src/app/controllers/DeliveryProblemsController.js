@@ -5,6 +5,9 @@ import Recipient from "../models/Recipient";
 import Deliveryman from "../models/Deliveryman";
 import DeliveryProblems from "../models/DeliveryProblems";
 
+import CancelOrderMail from "../jobs/CancelOrderMail";
+import Queue from "../../lib/Queue";
+
 class DeliveryProblemsController {
   async index(req, res) {
     const problems = await DeliveryProblems.findAll({
@@ -74,10 +77,7 @@ class DeliveryProblemsController {
   }
 
   async delete(req, res) {
-    const order_problem = await DeliveryProblems.findByPk(req.params.id, {
-      where: { createdAt: null },
-      attributes: ["id", "product", "start_date", "end_date", "createdAt"],
-    });
+    const order_problem = await DeliveryProblems.findByPk(req.params.id);
 
     if (!order_problem) {
       return res.status(401).json({ error: "Order problem not found" });
@@ -85,12 +85,21 @@ class DeliveryProblemsController {
 
     const { order_id } = order_problem;
 
-    if (!order_id) {
-      return res.status(401).json({ error: "Order not found" });
-    }
-
-    const order = await Order.findByPk(order_id, {
-      where: { canceled_at: null },
+    const order = await Order.findOne({
+      where: { id: order_id, canceled_at: null },
+      attributes: ["id", "product"],
+      include: [
+        {
+          model: Recipient,
+          as: "recipient",
+          attributes: ["id", "name"],
+        },
+        {
+          model: Deliveryman,
+          as: "deliveryman",
+          attributes: ["id", "name", "email"],
+        },
+      ],
     });
 
     if (!order) {
@@ -100,6 +109,11 @@ class DeliveryProblemsController {
     }
 
     order.canceled_at = new Date();
+
+    await Queue.add(CancelOrderMail.key, {
+      order,
+      order_problem,
+    });
 
     await order.save();
 
