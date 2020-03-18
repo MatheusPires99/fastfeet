@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import * as Yup from "yup";
 import {
   startOfHour,
@@ -11,18 +12,20 @@ import Order from "../models/Order";
 import Recipient from "../models/Recipient";
 import Deliveryman from "../models/Deliveryman";
 import File from "../models/File";
-// import Notification from "../schemas/Notification";
 
 import NewOrderMail from "../jobs/NewOrderMail";
 import Queue from "../../lib/Queue";
 
 class OrderController {
   async index(req, res) {
-    const { page = 1 } = req.query;
+    const { page = 1, name = "" } = req.query;
 
     const order = await Order.findAll({
       where: {
         canceled_at: null,
+        product: {
+          [Op.iLike]: `%${name}%`,
+        },
       },
       attributes: {
         exclude: ["createdAt", "updatedAt"],
@@ -116,14 +119,6 @@ class OrderController {
       recipientExist,
       order,
     });
-
-    // Notify deliveryman
-    // const recipient = await Recipient.findByPk(recipient_id);
-
-    // await Notification.create({
-    //   content: `Nova entrega para ${recipient.name}`,
-    //   user: deliveryman_id,
-    // });
 
     return res.json(order);
   }

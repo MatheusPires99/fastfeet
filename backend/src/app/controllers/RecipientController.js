@@ -1,9 +1,19 @@
+import { Op } from "sequelize";
 import * as Yup from "yup";
+
 import Recipient from "../models/Recipient";
 
 class RecipientController {
   async index(req, res) {
-    const recipients = await Recipient.findAll();
+    const { name = "" } = req.query;
+
+    const recipients = await Recipient.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%`,
+        },
+      },
+    });
 
     return res.json(recipients);
   }
