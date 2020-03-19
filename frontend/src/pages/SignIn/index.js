@@ -5,7 +5,7 @@ import * as Yup from "yup";
 
 import { singInRequest } from "~/store/modules/auth/actions";
 
-import logo from "~/assets/logo.png";
+import logo from "~/assets/logo.svg";
 
 const schema = Yup.object().shape({
   email: Yup.string()
