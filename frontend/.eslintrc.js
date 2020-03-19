@@ -33,6 +33,10 @@ module.exports = {
       { extensions: ['.jsx', '.js'] }
     ],
     'import/prefer-default-export': 'off',
+    'no-param-reassign': 'off',
+    'camelcase': 'off',
+    'jsx-a11y/label-has-associated-control': 'off',
+    'react/jsx-props-no-spreading': 'off',
 
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn'
