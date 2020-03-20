@@ -5,9 +5,9 @@ import { MdSearch, MdAdd } from "react-icons/md";
 
 import { Container, SearchBar } from "./styles";
 
-export default function HeaderList({ lowercaseTitle, page }) {
+export default function HeaderList({ lowercaseTitle, page, visible }) {
   return (
-    <Container>
+    <Container visible={visible}>
       <h1>Gerenciando {lowercaseTitle}</h1>
       <div>
         <SearchBar>
@@ -25,5 +25,6 @@ export default function HeaderList({ lowercaseTitle, page }) {
 
 HeaderList.propTypes = {
   lowercaseTitle: PropTypes.string.isRequired,
-  page: PropTypes.string.isRequired
+  page: PropTypes.string.isRequired,
+  visible: PropTypes.bool.isRequired
 };

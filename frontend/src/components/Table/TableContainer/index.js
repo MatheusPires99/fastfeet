@@ -21,7 +21,7 @@ const TableContainer = styled.table`
     border-radius: 4px;
     height: 57px;
     padding: 6px 15px;
-    color: #444;
+    color: #666;
     font-size: 16px;
     margin-bottom: 20px;
 

@@ -13,7 +13,7 @@ export const Container = styled.div`
   }
 
   div {
-    display: flex;
+    display: ${props => (props.visible ? "flex" : "none")};
     justify-content: space-between;
     align-items: center;
 
@@ -52,6 +52,10 @@ export const SearchBar = styled.div`
 
     &:focus {
       border-color: #7d40e7;
+    }
+
+    &::placeholder {
+      color: #999;
     }
   }
 
