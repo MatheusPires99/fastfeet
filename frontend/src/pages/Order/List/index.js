@@ -7,6 +7,7 @@ import api from "~/services/api";
 import { HeaderList } from "~/components/ActionHeader";
 import { TableContainer, TableDetails } from "~/components/Table";
 import Action from "./Action";
+import Pagination from "~/components/Pagination";
 
 import { ModalTags } from "./styles";
 
@@ -15,6 +16,9 @@ export default function OrderList() {
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pages, setPages] = useState(null);
+  const [totalOrders, setTotalOrders] = useState(null);
 
   const customStyles = {
     overlay: {
@@ -25,23 +29,39 @@ export default function OrderList() {
   useEffect(() => {
     async function loadOrders() {
       try {
-        const response = await api.get("/orders");
+        const response = await api.get("/orders", {
+          params: {
+            page: currentPage
+          }
+        });
 
         if (!response.data) {
           toast.warn("Nenhuma encomenda cadastrada");
         }
 
-        setOrders(response.data);
+        setPages(response.data.pages);
+        setTotalOrders(response.data.total);
+        setOrders(response.data.docs);
       } catch (err) {
         toast.error("Não foi possível carregar as informações das encomendas");
       }
     }
 
     loadOrders();
-  }, []);
+  }, [currentPage]);
 
   function handleToggleOpenModal() {
     setModalIsOpen(!modalIsOpen);
+  }
+
+  function handlePage(page) {
+    if (page === 0) {
+      setCurrentPage(1);
+    } else if (page > pages) {
+      setCurrentPage(pages);
+    } else {
+      setCurrentPage(page);
+    }
   }
 
   return (
@@ -76,7 +96,6 @@ export default function OrderList() {
               <td>Status</td>
               <Action
                 page={`order/edit/${order.id}`}
-                order={order}
                 handleToggleOpenModal={handleToggleOpenModal}
               />
               <TableDetails
@@ -115,6 +134,13 @@ export default function OrderList() {
           ))}
         </tbody>
       </TableContainer>
+
+      <Pagination
+        currentPage={currentPage}
+        pages={pages}
+        totalDocs={totalOrders}
+        handlePage={handlePage}
+      />
     </>
   );
 }

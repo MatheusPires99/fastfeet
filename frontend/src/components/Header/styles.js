@@ -37,6 +37,11 @@ export const Container = styled.header`
         &:hover {
           color: #444;
         }
+
+        &.selected {
+          color: #444;
+          font-weight: bold;
+        }
       }
     }
   }

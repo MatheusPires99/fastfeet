@@ -12,7 +12,7 @@ import { TableAction } from "~/components/Table";
 
 import { Container } from "./styles";
 
-export default function Action({ page, order, handleToggleOpenModal }) {
+export default function Action({ page, handleToggleOpenModal }) {
   const [visible, setVisible] = useState(false);
 
   function handleVisible() {
