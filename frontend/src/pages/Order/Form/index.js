@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
-import { MdCheck, MdChevronLeft } from "react-icons/md";
 
 import api from "~/services/api";
 
-import { FormContainer, FormLoading, Input } from "~/components/Form";
+import { FormContainer, FormLoading, Input, Select } from "~/components/Form";
 import { HeaderForm } from "~/components/ActionHeader";
 
-// import { Container } from './styles';
+import { SelectContainer } from "./styles";
 
 export default function OrderForm({ match }) {
   const { id } = match.params;
 
-  console.tron.log(id);
-
   const [loading, setLoading] = useState(false);
-  const [order, setOrder] = useState([]);
+  const [order, setOrder] = useState({});
 
   useEffect(() => {
     if (id) {
@@ -45,31 +42,27 @@ export default function OrderForm({ match }) {
         <FormLoading />
       ) : (
         <FormContainer initialData={order}>
-          <header>
-            <div>
-              <strong>Edição de Encomendas</strong>
-            </div>
-
-            <div>
-              <button type="button">
-                <MdChevronLeft />
-                Voltar
-              </button>
-
-              <button type="submit">
-                <MdCheck />
-                Salvar
-              </button>
-            </div>
-          </header>
+          <HeaderForm id={id} prevPage="/orders" title="encomendas" />
 
           <section>
-            <div>
-              <Input name="recipient.name" label="Destinatário" />
-              <Input name="deliveryman.name" label="Entregador" />
-            </div>
+            <SelectContainer>
+              <Select
+                name="recipient.name"
+                label="Destinatário"
+                placeholder="Ludwig van Beethoven"
+              />
+              <Select
+                name="deliveryman.name"
+                label="Entregador"
+                placeholder="John Doe"
+              />
+            </SelectContainer>
 
-            <Input name="product" label="Nome do produto" />
+            <Input
+              name="product"
+              label="Nome do produto"
+              placeholder="Yamaha SX7"
+            />
           </section>
         </FormContainer>
       )}

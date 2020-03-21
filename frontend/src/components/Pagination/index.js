@@ -21,19 +21,19 @@ export default function Pagination({
 
       <aside>
         <button type="button" onClick={() => handlePage(1)}>
-          <FaAngleDoubleLeft color="#fff" size={18} />
+          <FaAngleDoubleLeft color="#fff" size={14} />
         </button>
         <button type="button" onClick={() => handlePage(currentPage - 1)}>
-          <FaAngleLeft color="#fff" size={18} />
+          <FaAngleLeft color="#fff" size={14} />
         </button>
         <span>
           {currentPage} / {pages}
         </span>
         <button type="button" onClick={() => handlePage(currentPage + 1)}>
-          <FaAngleRight color="#fff" size={18} />
+          <FaAngleRight color="#fff" size={14} />
         </button>
         <button type="button" onClick={() => handlePage(pages)}>
-          <FaAngleDoubleRight color="#fff" size={18} />
+          <FaAngleDoubleRight color="#fff" size={14} />
         </button>
       </aside>
     </Container>

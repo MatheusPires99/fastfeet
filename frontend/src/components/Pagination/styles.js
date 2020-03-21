@@ -19,7 +19,7 @@ export const Container = styled.div`
       border: 0;
       border-radius: 4px;
       opacity: 0.6;
-      padding: 2px;
+      padding: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
