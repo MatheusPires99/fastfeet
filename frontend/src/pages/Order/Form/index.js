@@ -14,6 +14,10 @@ export default function OrderForm({ match }) {
 
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState({});
+  const [recipients, setRecipients] = useState([]);
+  const [selectedRecipient, setSelectedRecipient] = useState([]);
+  const [deliverymans, setDeliverymans] = useState([]);
+  const [selectedDeliveryman, setSelectedDeliveryman] = useState([]);
 
   useEffect(() => {
     if (id) {
@@ -25,6 +29,8 @@ export default function OrderForm({ match }) {
           const response = await api.get(`/orders/${id}`);
 
           setOrder(response.data);
+          setSelectedRecipient(response.data.recipient);
+          setSelectedDeliveryman(response.data.deliveryman);
 
           setLoading(false);
         } catch (err) {
@@ -35,6 +41,54 @@ export default function OrderForm({ match }) {
       loadOrderDetails();
     }
   }, [id]);
+
+  useEffect(() => {
+    async function loadSelectOptions() {
+      try {
+        const [recipientResponse, deliverymanResponse] = await Promise.all([
+          api.get("recipients"),
+          api.get("deliverymans")
+        ]);
+
+        setRecipients(recipientResponse.data);
+        setDeliverymans(deliverymanResponse.data);
+      } catch (err) {
+        toast.error("Falha ao carregar dados");
+      }
+    }
+
+    loadSelectOptions();
+  }, []);
+
+  const recipientsOptions = recipients.map(recipient => {
+    const data = {
+      value: recipient.id,
+      label: recipient.name
+    };
+
+    return data;
+  });
+
+  const handleChangeRecipient = selectedOption => {
+    const { value } = selectedOption;
+
+    setSelectedRecipient(value);
+  };
+
+  const deliverymansOptions = deliverymans.map(deliveryman => {
+    const data = {
+      value: deliveryman.id,
+      label: deliveryman.name
+    };
+
+    return data;
+  });
+
+  const handleChangeDeliveryman = selectedOption => {
+    const { value } = selectedOption;
+
+    setSelectedDeliveryman(value);
+  };
 
   return (
     <>
@@ -49,12 +103,24 @@ export default function OrderForm({ match }) {
               <Select
                 name="recipient.name"
                 label="Destinatário"
-                placeholder="Ludwig van Beethoven"
+                placeholder="Selecione um destinatário"
+                options={recipientsOptions}
+                defaultValue={{
+                  value: selectedRecipient.id,
+                  label: selectedRecipient.name
+                }}
+                onChange={handleChangeRecipient}
               />
               <Select
                 name="deliveryman.name"
                 label="Entregador"
-                placeholder="John Doe"
+                placeholder="Selecione um entregador"
+                options={deliverymansOptions}
+                defaultValue={{
+                  value: selectedDeliveryman.id,
+                  label: selectedDeliveryman.name
+                }}
+                onChange={handleChangeDeliveryman}
               />
             </SelectContainer>
 
