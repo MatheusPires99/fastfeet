@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import * as Yup from "yup";
 
 import api from "~/services/api";
+import history from "~/services/history";
 
 import { FormContainer, FormLoading, Input, Select } from "~/components/Form";
 import { HeaderForm } from "~/components/ActionHeader";
 
 import { SelectContainer } from "./styles";
+
+const schema = Yup.object().shape({
+  product: Yup.string().required("O producto da entrega é obrigatório"),
+  deliveryman_id: Yup.number().required("Selecione um entregador"),
+  recipient_id: Yup.number().required("Selecione um entregador")
+});
 
 export default function OrderForm({ match }) {
   const { id } = match.params;
@@ -90,12 +98,38 @@ export default function OrderForm({ match }) {
     setSelectedDeliveryman(value);
   };
 
+  async function handleSubmit({ product, deliveryman_id, recipient_id }) {
+    try {
+      deliveryman_id = selectedDeliveryman;
+      recipient_id = selectedRecipient;
+
+      const data = { product, deliveryman_id, recipient_id };
+
+      if (id) {
+        await api.put(`/orders/${id}`, data);
+      }
+
+      if (!id) {
+        await api.post("orders", data);
+      }
+
+      toast.success("Encomenda salva com sucesso");
+      history.push("/orders");
+    } catch (err) {
+      toast.error("Algo deu errado ao salvar a encomenda");
+    }
+  }
+
   return (
     <>
       {loading ? (
         <FormLoading />
       ) : (
-        <FormContainer initialData={order}>
+        <FormContainer
+          initialData={order}
+          onSubmit={handleSubmit}
+          schema={schema}
+        >
           <HeaderForm id={id} prevPage="/orders" title="encomendas" />
 
           <section>
@@ -127,7 +161,7 @@ export default function OrderForm({ match }) {
             <Input
               name="product"
               label="Nome do produto"
-              placeholder="Yamaha SX7"
+              placeholder="Ex: iPhone"
             />
           </section>
         </FormContainer>
