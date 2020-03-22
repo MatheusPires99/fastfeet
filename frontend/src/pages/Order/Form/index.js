@@ -12,12 +12,12 @@ import { SelectContainer } from "./styles";
 export default function OrderForm({ match }) {
   const { id } = match.params;
 
-  const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState({});
   const [recipients, setRecipients] = useState([]);
   const [selectedRecipient, setSelectedRecipient] = useState([]);
   const [deliverymans, setDeliverymans] = useState([]);
   const [selectedDeliveryman, setSelectedDeliveryman] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
