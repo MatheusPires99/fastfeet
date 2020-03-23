@@ -3,9 +3,11 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { MdCheck, MdChevronLeft } from "react-icons/md";
 
+import Spinner from "~/components/Spinner";
+
 import { Container } from "./styles";
 
-export default function HeaderForm({ id, prevPage, title }) {
+export default function HeaderForm({ id, prevPage, title, loading }) {
   return (
     <Container>
       <h1>{id ? `Edição de ${title}` : `Cadastro de ${title}`}</h1>
@@ -17,8 +19,14 @@ export default function HeaderForm({ id, prevPage, title }) {
         </Link>
 
         <button type="submit">
-          <MdCheck color="#fff" size={22} />
-          SALVAR
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+              <MdCheck color="#fff" size={22} />
+              SALVAR
+            </>
+          )}
         </button>
       </div>
     </Container>
@@ -28,5 +36,6 @@ export default function HeaderForm({ id, prevPage, title }) {
 HeaderForm.propTypes = {
   id: PropTypes.number.isRequired,
   prevPage: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  loading: PropTypes.bool.isRequired
 };

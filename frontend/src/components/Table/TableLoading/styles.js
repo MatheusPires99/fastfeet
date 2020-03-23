@@ -12,17 +12,6 @@ export const Container = styled.div`
   }
 `;
 
-export const HeaderAction = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  div {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-`;
-
 export const TableContainer = styled.div``;
 
 export const Pagination = styled.div`

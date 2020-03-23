@@ -5,14 +5,25 @@ import { MdSearch, MdAdd } from "react-icons/md";
 
 import { Container, SearchBar } from "./styles";
 
-export default function HeaderList({ lowercaseTitle, page, visible }) {
+export default function HeaderList({
+  lowercaseTitle,
+  page,
+  visible,
+  search,
+  setSearch
+}) {
   return (
     <Container visible={visible}>
       <h1>Gerenciando {lowercaseTitle}</h1>
       <div>
         <SearchBar>
           <MdSearch size={22} color="#999" />
-          <input type="text" placeholder={`Buscar por ${lowercaseTitle}`} />
+          <input
+            type="text"
+            placeholder={`Buscar por ${lowercaseTitle}`}
+            value={search}
+            onChange={e => [setSearch(e.target.value)]}
+          />
         </SearchBar>
         <Link to={`/${page}`}>
           <MdAdd size={22} color="#fff" />
@@ -23,8 +34,15 @@ export default function HeaderList({ lowercaseTitle, page, visible }) {
   );
 }
 
+HeaderList.defaultProps = {
+  search: null,
+  setSearch: null
+};
+
 HeaderList.propTypes = {
   lowercaseTitle: PropTypes.string.isRequired,
   page: PropTypes.string.isRequired,
-  visible: PropTypes.bool.isRequired
+  visible: PropTypes.bool.isRequired,
+  search: PropTypes.string,
+  setSearch: PropTypes.func
 };

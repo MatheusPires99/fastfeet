@@ -18,8 +18,9 @@ export default function OrderList() {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(null);
+  const [search, setSearch] = useState("");
   const [totalOrders, setTotalOrders] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const customStyles = {
     overlay: {
@@ -30,11 +31,10 @@ export default function OrderList() {
   useEffect(() => {
     async function loadOrders() {
       try {
-        setLoading(true);
-
         const response = await api.get("/orders", {
           params: {
-            page: currentPage
+            page: currentPage,
+            name: search
           }
         });
 
@@ -53,7 +53,7 @@ export default function OrderList() {
     }
 
     loadOrders();
-  }, [currentPage]);
+  }, [currentPage, search]);
 
   function handleToggleOpenModal() {
     setModalIsOpen(!modalIsOpen);
@@ -71,12 +71,18 @@ export default function OrderList() {
 
   return (
     <>
+      <HeaderList
+        lowercaseTitle="encomendas"
+        page="order/new"
+        visible
+        search={search}
+        setSearch={setSearch}
+      />
+
       {loading ? (
         <TableLoading />
       ) : (
         <>
-          <HeaderList lowercaseTitle="encomendas" page="order/new" visible />
-
           <TableContainer>
             <thead>
               <tr>

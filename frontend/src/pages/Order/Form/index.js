@@ -26,6 +26,7 @@ export default function OrderForm({ match }) {
   const [deliverymans, setDeliverymans] = useState([]);
   const [selectedDeliveryman, setSelectedDeliveryman] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -42,6 +43,7 @@ export default function OrderForm({ match }) {
 
           setLoading(false);
         } catch (err) {
+          setLoading(false);
           toast.error("Falha ao carregar dados");
         }
       }
@@ -100,22 +102,32 @@ export default function OrderForm({ match }) {
 
   async function handleSubmit({ product, deliveryman_id, recipient_id }) {
     try {
-      deliveryman_id = selectedDeliveryman;
-      recipient_id = selectedRecipient;
-
-      const data = { product, deliveryman_id, recipient_id };
+      setButtonLoading(true);
 
       if (id) {
+        deliveryman_id = selectedDeliveryman.id;
+        recipient_id = selectedRecipient.id;
+
+        const data = { product, deliveryman_id, recipient_id };
+
         await api.put(`/orders/${id}`, data);
       }
 
       if (!id) {
-        await api.post("orders", data);
+        deliveryman_id = selectedDeliveryman;
+        recipient_id = selectedRecipient;
+
+        const data = { product, deliveryman_id, recipient_id };
+
+        await api.post("/orders", data);
       }
+
+      setButtonLoading(false);
 
       toast.success("Encomenda salva com sucesso");
       history.push("/orders");
     } catch (err) {
+      setButtonLoading(false);
       toast.error("Algo deu errado ao salvar a encomenda");
     }
   }
@@ -129,8 +141,14 @@ export default function OrderForm({ match }) {
           initialData={order}
           onSubmit={handleSubmit}
           schema={schema}
+          loading={buttonLoading}
         >
-          <HeaderForm id={id} prevPage="/orders" title="encomendas" />
+          <HeaderForm
+            id={id}
+            prevPage="/orders"
+            title="encomendas"
+            loading={loading}
+          />
 
           <section>
             <SelectContainer>
