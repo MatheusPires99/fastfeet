@@ -7,16 +7,59 @@ import {
   MdCreate,
   MdDeleteForever
 } from "react-icons/md";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
+
+import api from "~/services/api";
 
 import { TableAction } from "~/components/Table";
 
 import { Container } from "./styles";
 
-export default function Action({ page, handleToggleOpenModal }) {
+export default function Action({
+  page,
+  handleToggleOpenModal,
+  id,
+  orders,
+  setOrders
+}) {
   const [visible, setVisible] = useState(false);
 
   function handleVisible() {
     setVisible(!visible);
+  }
+
+  async function handleDelete() {
+    try {
+      await api.delete(`/orders/${id}`);
+
+      // eslint-disable-next-line react/prop-types
+      const orderFilter = orders.filter(e => e.id !== id);
+
+      setOrders(orderFilter);
+
+      toast.success(`Item #${id} deletado com sucesso`);
+    } catch (err) {
+      toast.error("Ocorreu um erro ao tentar excluir a item");
+    }
+  }
+
+  function confirmDelete() {
+    confirmAlert({
+      title: "Alerta",
+      message: `Tem certeza que deseja deletar a encomenda ${id}?`,
+      closeOnEscape: false,
+      closeOnClickOutside: false,
+      buttons: [
+        {
+          label: "Sim",
+          onClick: () => handleDelete()
+        },
+        {
+          label: "Não"
+        }
+      ]
+    });
   }
 
   return (
@@ -39,7 +82,7 @@ export default function Action({ page, handleToggleOpenModal }) {
           </Link>
         </div>
         <div>
-          <button type="button">
+          <button type="button" onClick={confirmDelete}>
             <MdDeleteForever size={18} color="#DE3B3B" />
             Excluir
           </button>
@@ -51,5 +94,8 @@ export default function Action({ page, handleToggleOpenModal }) {
 
 Action.propTypes = {
   page: PropTypes.string.isRequired,
-  handleToggleOpenModal: PropTypes.func.isRequired
+  handleToggleOpenModal: PropTypes.func.isRequired,
+  id: PropTypes.number.isRequired,
+  orders: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+  setOrders: PropTypes.func.isRequired
 };

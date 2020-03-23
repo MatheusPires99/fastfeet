@@ -23,7 +23,6 @@ const TableContainer = styled.table`
     padding: 6px 15px;
     color: #666;
     font-size: 16px;
-    margin-bottom: 20px;
 
     &:last-child {
       text-align: right;

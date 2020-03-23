@@ -9,7 +9,7 @@ import { TableContainer, TableDetails, TableLoading } from "~/components/Table";
 import Action from "./Action";
 import Pagination from "~/components/Pagination";
 
-import { ModalTags } from "./styles";
+import { ModalTags, Status } from "./styles";
 
 export default function OrderList() {
   Modal.setAppElement("#root");
@@ -28,6 +28,29 @@ export default function OrderList() {
     }
   };
 
+  const getFormattedStatus = order => {
+    let status = {};
+
+    if (order.canceled_at) {
+      status = { text: "CANCELADA", background: "#FAB0B0", color: "#DE3B3B" };
+      return status;
+    }
+
+    if (order.end_date) {
+      status = { text: "ENTREGUE", background: "#DFF0DF", color: "#2CA42B" };
+      return status;
+    }
+
+    if (order.start_date) {
+      status = { text: "RETIRADA", background: "#BAD2FF", color: "#4D85EE" };
+      return status;
+    }
+
+    status = { text: "PENDENTE", background: "#F0F0DF", color: "#C1BC35" };
+
+    return status;
+  };
+
   useEffect(() => {
     async function loadOrders() {
       try {
@@ -38,13 +61,20 @@ export default function OrderList() {
           }
         });
 
-        if (!response.data) {
+        const data = response.data.docs.map(order => {
+          return {
+            ...order,
+            formattedStatus: getFormattedStatus(order)
+          };
+        });
+
+        if (!data) {
           toast.warn("Nenhuma encomenda cadastrada");
         }
 
         setPages(response.data.pages);
         setTotalOrders(response.data.total);
-        setOrders(response.data.docs);
+        setOrders(data);
         setLoading(false);
       } catch (err) {
         setLoading(false);
@@ -108,10 +138,15 @@ export default function OrderList() {
                   </td>
                   <td>{order.recipient.city}</td>
                   <td>{order.recipient.state}</td>
-                  <td>Status</td>
+                  <Status status={order.formattedStatus}>
+                    <span>{order.formattedStatus.text}</span>
+                  </Status>
                   <Action
                     page={`order/edit/${order.id}`}
                     handleToggleOpenModal={handleToggleOpenModal}
+                    id={order.id}
+                    orders={orders}
+                    setOrders={setOrders}
                   />
                   <TableDetails
                     isOpen={modalIsOpen}

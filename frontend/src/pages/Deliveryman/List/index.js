@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { HeaderList } from "~/components/ActionHeader";
 import { TableContainer } from "~/components/Table";
 import Action from "./Action";
 
 export default function OrderList() {
+  const [deliverymans, setDeliverymans] = useState([]);
+
   return (
     <>
       <HeaderList
