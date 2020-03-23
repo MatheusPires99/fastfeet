@@ -68,7 +68,7 @@ export default function OrderList() {
           };
         });
 
-        if (!data) {
+        if (!response.data) {
           toast.warn("Nenhuma encomenda cadastrada");
         }
 

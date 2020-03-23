@@ -1,16 +1,53 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { MdMoreHoriz, MdCreate, MdDeleteForever } from "react-icons/md";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
+
+import api from "~/services/api";
 
 import { TableAction } from "~/components/Table";
 
 import { Container } from "./styles";
 
-export default function Action() {
+export default function Action(page, id, deliverymans, setDeliverymans) {
   const [visible, setVisible] = useState(false);
 
   function handleVisible() {
     setVisible(!visible);
+  }
+
+  async function handleDelete() {
+    try {
+      await api.delete(`/orders/${id}`);
+
+      // eslint-disable-next-line react/prop-types
+      const deliverymansFilter = deliverymans.filter(d => d.id !== id);
+
+      setDeliverymans(deliverymansFilter);
+
+      toast.success(`Entregador #${id} deletado com sucesso`);
+    } catch (err) {
+      toast.error("Ocorreu um erro ao tentar excluir o entregador");
+    }
+  }
+
+  function confirmDelete() {
+    confirmAlert({
+      title: "Alerta",
+      message: `Tem certeza que deseja deletar o entregador ${id}?`,
+      closeOnEscape: false,
+      closeOnClickOutside: false,
+      buttons: [
+        {
+          label: "Sim",
+          onClick: () => handleDelete()
+        },
+        {
+          label: "Não"
+        }
+      ]
+    });
   }
 
   return (
@@ -20,13 +57,13 @@ export default function Action() {
       </button>
       <TableAction visible={visible}>
         <div>
-          <Link to="/">
+          <Link to={page}>
             <MdCreate size={18} color="#4D85EE" />
             Editar
           </Link>
         </div>
         <div>
-          <button type="button">
+          <button type="button" onClick={confirmDelete}>
             <MdDeleteForever size={18} color="#DE3B3B" />
             Excluir
           </button>
