@@ -7,6 +7,8 @@ import { singInRequest } from "~/store/modules/auth/actions";
 
 import logo from "~/assets/logo.svg";
 
+import Spinner from "~/components/Spinner";
+
 const schema = Yup.object().shape({
   email: Yup.string()
     .email("Digite um e-mail válido")
@@ -34,7 +36,7 @@ export default function SingIn() {
         <Input name="password" type="password" placeholder="**********" />
 
         <button type="submit">
-          {loading ? "Carregando..." : "Entrar no sistema"}
+          {loading ? <Spinner /> : "Entrar no sistema"}
         </button>
       </Form>
     </>
