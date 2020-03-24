@@ -132,7 +132,13 @@ export default function OrderList() {
                   <td>{order.recipient.name}</td>
                   <td>
                     <div>
-                      <img src={order.deliveryman.url} alt="Avatar" />
+                      <img
+                        src={
+                          order.deliveryman.avatar.url ||
+                          "https://api.adorable.io/avatars/40/abott@adorable.pngC"
+                        }
+                        alt="Avatar"
+                      />
                       {order.deliveryman.name}
                     </div>
                   </td>

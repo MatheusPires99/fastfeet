@@ -34,7 +34,7 @@ export default function HeaderForm({ id, prevPage, title, loading }) {
 }
 
 HeaderForm.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   prevPage: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired

@@ -85,7 +85,10 @@ export default function OrderList() {
                   <td>
                     <div>
                       <img
-                        src="https://api.adorable.io/avatars/40/abott@adorable.pngC"
+                        src={
+                          deliveryman.avatar.url ||
+                          "https://api.adorable.io/avatars/40/abott@adorable.pngC"
+                        }
                         alt="Avatar"
                       />
                     </div>
@@ -93,10 +96,10 @@ export default function OrderList() {
                   <td>{deliveryman.name}</td>
                   <td>{deliveryman.email}</td>
                   <Action
-                    page={`deliveryman/edit/${deliveryman.id}`}
+                    page={`/deliveryman/edit/${deliveryman.id}`}
                     id={deliveryman.id}
-                    orders={deliverymans}
-                    setOrders={setDeliverymans}
+                    deliverymans={deliverymans}
+                    setDeliverymans={setDeliverymans}
                   />
                 </tr>
               ))}

@@ -60,8 +60,8 @@ export default function OrderForm({ match }) {
           api.get("deliverymans")
         ]);
 
-        setRecipients(recipientResponse.data);
-        setDeliverymans(deliverymanResponse.data);
+        setRecipients(recipientResponse.data.docs);
+        setDeliverymans(deliverymanResponse.data.docs);
       } catch (err) {
         toast.error("Falha ao carregar dados");
       }
@@ -72,7 +72,7 @@ export default function OrderForm({ match }) {
 
   const recipientsOptions = recipients.map(recipient => {
     const data = {
-      value: recipient.id,
+      value: recipient,
       label: recipient.name
     };
 
@@ -87,7 +87,7 @@ export default function OrderForm({ match }) {
 
   const deliverymansOptions = deliverymans.map(deliveryman => {
     const data = {
-      value: deliveryman.id,
+      value: deliveryman,
       label: deliveryman.name
     };
 

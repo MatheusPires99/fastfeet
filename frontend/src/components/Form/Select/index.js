@@ -59,10 +59,11 @@ export default function SelectComponent({
 }
 
 SelectComponent.propTypes = {
+  name: PropTypes.string.isRequired,
+  options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+  onChange: PropTypes.func.isRequired,
+  defaultValue: PropTypes.oneOfType([PropTypes.array, PropTypes.object])
+    .isRequired,
   label: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  options: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  onChange: PropTypes.func.isRequired,
-  defaultValue: PropTypes.oneOfType([PropTypes.array]).isRequired
 };

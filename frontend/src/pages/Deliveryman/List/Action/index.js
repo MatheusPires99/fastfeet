@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { MdMoreHoriz, MdCreate, MdDeleteForever } from "react-icons/md";
 import { toast } from "react-toastify";
@@ -10,7 +11,7 @@ import { TableAction } from "~/components/Table";
 
 import { Container } from "./styles";
 
-export default function Action(page, id, deliverymans, setDeliverymans) {
+export default function Action({ page, id, deliverymans, setDeliverymans }) {
   const [visible, setVisible] = useState(false);
 
   function handleVisible() {
@@ -19,12 +20,12 @@ export default function Action(page, id, deliverymans, setDeliverymans) {
 
   async function handleDelete() {
     try {
-      await api.delete(`/orders/${id}`);
+      await api.delete(`/deliverymans/${id}`);
 
       // eslint-disable-next-line react/prop-types
-      const deliverymansFilter = deliverymans.filter(d => d.id !== id);
+      const deliverymanFilter = deliverymans.filter(d => d.id !== id);
 
-      setDeliverymans(deliverymansFilter);
+      setDeliverymans(deliverymanFilter);
 
       toast.success(`Entregador #${id} deletado com sucesso`);
     } catch (err) {
@@ -55,6 +56,7 @@ export default function Action(page, id, deliverymans, setDeliverymans) {
       <button onClick={handleVisible} type="button">
         <MdMoreHoriz size={22} color="#c6c6c6" />
       </button>
+
       <TableAction visible={visible}>
         <div>
           <Link to={page}>
@@ -72,3 +74,11 @@ export default function Action(page, id, deliverymans, setDeliverymans) {
     </Container>
   );
 }
+
+Action.propTypes = {
+  page: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
+  deliverymans: PropTypes.oneOfType([PropTypes.array, PropTypes.object])
+    .isRequired,
+  setDeliverymans: PropTypes.func.isRequired
+};
