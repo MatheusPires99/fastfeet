@@ -96,7 +96,7 @@ export default function OrderList() {
                   <td>{deliveryman.name}</td>
                   <td>{deliveryman.email}</td>
                   <Action
-                    page={`/deliveryman/edit/${deliveryman.id}`}
+                    page={`deliveryman/edit/${deliveryman.id}`}
                     id={deliveryman.id}
                     deliverymans={deliverymans}
                     setDeliverymans={setDeliverymans}

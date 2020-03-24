@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
@@ -11,20 +11,13 @@ import AvatarInput from "./AvatarInput";
 import { FormContainer, FormLoading, Input } from "~/components/Form";
 import { HeaderForm } from "~/components/ActionHeader";
 
-const schema = Yup.object().shape({
-  avatar_id: Yup.number().required("A foto do entregador é obrigatória"),
-  name: Yup.string().required("O nome do entregador é obrigatório"),
-  email: Yup.string()
-    .email()
-    .required("O e-mail do entregador é obrigatório")
-});
-
 export default function DeliverymanForm({ match }) {
   const { id } = match.params;
 
   const [loading, setLoading] = useState(false);
   const [deliveryman, setDeliveryman] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const formRef = useRef(null);
 
   useEffect(() => {
     if (id) {
@@ -47,11 +40,22 @@ export default function DeliverymanForm({ match }) {
     }
   }, [id]);
 
-  async function handleSubmit({ avatar_id, name, email }) {
+  async function handleSubmit(data) {
     try {
       setButtonLoading(true);
 
-      const data = { avatar_id, name, email };
+      formRef.current.setErrors({});
+
+      const schema = Yup.object().shape({
+        name: Yup.string().required("O nome do entregador é obrigatório"),
+        email: Yup.string()
+          .email()
+          .required("O e-mail do entregador é obrigatório")
+      });
+
+      await schema.validate(data, {
+        abortEarly: false
+      });
 
       if (id) {
         await api.put(`/deliverymans/${id}`, data);
@@ -66,8 +70,20 @@ export default function DeliverymanForm({ match }) {
       toast.success("Entregador salvo com sucesso");
       history.push("/deliverymans");
     } catch (err) {
-      setButtonLoading(false);
-      toast.error("Algo deu errado ao salvar o entregador");
+      const validationErrors = {};
+
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach(error => {
+          validationErrors[error.path] = error.message;
+        });
+
+        formRef.current.setErrors(validationErrors);
+
+        setButtonLoading(false);
+      } else {
+        setButtonLoading(false);
+        toast.error("Algo deu errado ao salvar o entregador");
+      }
     }
   }
 
@@ -79,7 +95,7 @@ export default function DeliverymanForm({ match }) {
         <FormContainer
           initialData={deliveryman}
           onSubmit={handleSubmit}
-          schema={schema}
+          ref={formRef}
         >
           <HeaderForm
             id={id}

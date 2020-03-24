@@ -59,7 +59,7 @@ export default function Action({ page, id, deliverymans, setDeliverymans }) {
 
       <TableAction visible={visible}>
         <div>
-          <Link to={page}>
+          <Link to={`/${page}`}>
             <MdCreate size={18} color="#4D85EE" />
             Editar
           </Link>

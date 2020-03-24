@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useField } from "@rocketseat/unform";
-
-import { MdPhotoCamera } from "react-icons/md";
-
-import api from "../../../../services/api";
+import React, { useState, useEffect, useRef } from "react";
+import { useField } from "@unform/core";
+import { MdInsertPhoto } from "react-icons/md";
+import api from "~/services/api";
 
 import { Container } from "./styles";
 
@@ -46,7 +44,7 @@ export default function AvatarInput() {
         ) : (
           <>
             <div>
-              <MdPhotoCamera size={44} color="#ddd" />
+              <MdInsertPhoto size={44} color="#ddd" />
               <strong>Adicionar foto</strong>
             </div>
           </>

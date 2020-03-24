@@ -26,4 +26,10 @@ export const Container = styled.div`
       color: #999;
     }
   }
+
+  span {
+    color: #de3b3b;
+    font-weight: bold;
+    margin-top: 5px;
+  }
 `;
