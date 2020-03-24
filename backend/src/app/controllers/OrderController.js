@@ -1,12 +1,6 @@
 import { Op } from "sequelize";
 import * as Yup from "yup";
-import {
-  startOfHour,
-  setHours,
-  isBefore,
-  isWithinInterval,
-  parseISO,
-} from "date-fns";
+import { setHours, isWithinInterval, parseISO } from "date-fns";
 
 import Order from "../models/Order";
 import Recipient from "../models/Recipient";
@@ -20,19 +14,18 @@ class OrderController {
   async index(req, res) {
     const { page = 1, name = "" } = req.query;
 
-    const order = await Order.findAll({
+    const { docs, pages, total } = await Order.paginate({
       where: {
-        canceled_at: null,
         product: {
           [Op.iLike]: `%${name}%`,
         },
       },
+      paginate: 10,
+      page,
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
       order: [["id", "DESC"]],
-      limit: 20,
-      offset: (page - 1) * 20,
       include: [
         {
           model: Recipient,
@@ -63,14 +56,52 @@ class OrderController {
       ],
     });
 
-    return res.json(order);
+    return res.json({
+      docs,
+      page,
+      pages,
+      total,
+    });
   }
 
-  async show(res, req) {
-    const order = await Order.findByPk(req.params.id);
+  async show(req, res) {
+    const order = await Order.findByPk(req.params.id, {
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+      include: [
+        {
+          model: Recipient,
+          as: "recipient",
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: Deliveryman,
+          as: "deliveryman",
+          attributes: ["id", "name", "email"],
+          where: {
+            status: true,
+          },
+          include: [
+            {
+              model: File,
+              as: "avatar",
+              attributes: ["id", "path", "url"],
+            },
+          ],
+        },
+        {
+          model: File,
+          as: "signature",
+          attributes: ["id", "path", "url"],
+        },
+      ],
+    });
 
     if (!order) {
-      return res.status(401).json({ error: "Order not found" });
+      return res.status(401).json({ error: "Order not found!" });
     }
 
     return res.json(order);
@@ -132,47 +163,37 @@ class OrderController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(401).json({ error: "Validation fail" });
+      return res.status(400).json({ error: "Validation fails!" });
     }
 
-    const order = await Order.findByPk(req.params.id);
+    const orderExists = await Order.findByPk(req.params.id);
 
-    const { start_date, end_date } = req.body;
-
-    if (!start_date) {
-      return res.status(400).json({ error: "Invalid start date" });
+    if (!orderExists) {
+      return res.status(401).json({ error: "Order not found!" });
     }
 
-    const formattedStartDate = startOfHour(parseISO(start_date));
-    const formattedEndDate = startOfHour(parseISO(end_date));
+    const { start_date } = req.body;
 
-    if (isBefore(formattedStartDate, new Date())) {
-      return res.status(400).json({ error: "Past dates are not permitted" });
+    if (start_date) {
+      const formattedDate = parseISO(start_date);
+      const start_hour = setHours(new Date(), 8);
+      const end_hour = setHours(new Date(), 18);
+
+      if (
+        !isWithinInterval(formattedDate, {
+          start: start_hour,
+          end: end_hour,
+        })
+      ) {
+        return res.json({
+          error: "You can only withdraw an order between 08:00 and 18:00!",
+        });
+      }
     }
 
-    const start_hour = setHours(formattedStartDate, 8);
-    const end_hour = setHours(formattedStartDate, 18);
+    const order = await orderExists.update(req.body);
 
-    if (
-      !isWithinInterval(formattedStartDate, {
-        start: start_hour,
-        end: end_hour,
-      })
-    ) {
-      return res.status(400).json({
-        error: "You can only withdraw and order between 08:00 and 18:00",
-      });
-    }
-
-    if (isBefore(formattedEndDate, formattedStartDate)) {
-      return res
-        .status(401)
-        .json({ error: "The start date must be before end date" });
-    }
-
-    const { id, product } = await order.update(req.body);
-
-    return res.json({ id, product, start_date, end_date });
+    return res.json(order);
   }
 
   async delete(req, res) {

@@ -5,17 +5,20 @@ import Recipient from "../models/Recipient";
 
 class RecipientController {
   async index(req, res) {
-    const { name = "" } = req.query;
+    const { page = 1, name = "" } = req.query;
 
-    const recipients = await Recipient.findAll({
+    const { docs, pages, total } = await Recipient.paginate({
       where: {
         name: {
           [Op.like]: `%${name}%`,
         },
       },
+      paginate: 10,
+      page,
+      order: [["id", "DESC"]],
     });
 
-    return res.json(recipients);
+    return res.json({ docs, page, pages, total });
   }
 
   async store(req, res) {

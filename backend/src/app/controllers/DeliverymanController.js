@@ -6,15 +6,18 @@ import File from "../models/File";
 
 class DeliverymanController {
   async index(req, res) {
-    const { name = "" } = req.query;
+    const { page = 1, name = "" } = req.query;
 
-    const deliverymans = await Deliveryman.findAll({
+    const { docs, pages, total } = await Deliveryman.paginate({
       where: {
         name: {
           [Op.like]: `%${name}%`,
         },
       },
       attributes: ["id", "name", "email"],
+      paginate: 10,
+      page,
+      order: [["id", "DESC"]],
       include: [
         {
           model: File,
@@ -24,7 +27,7 @@ class DeliverymanController {
       ],
     });
 
-    return res.json(deliverymans);
+    return res.json({ docs, page, pages, total });
   }
 
   async show(req, res) {
