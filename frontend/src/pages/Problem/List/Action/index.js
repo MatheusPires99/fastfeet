@@ -1,16 +1,48 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import { MdMoreHoriz, MdVisibility, MdDeleteForever } from "react-icons/md";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
+
+import api from "~/services/api";
 
 import { TableAction } from "~/components/Table";
 
 import { Container } from "./styles";
 
-export default function Action() {
+export default function Action({ handleToggleOpenModal, id }) {
   const [visible, setVisible] = useState(false);
 
   function handleVisible() {
     setVisible(!visible);
+  }
+
+  async function handleDelete() {
+    try {
+      await api.delete(`/problem/${id}/cancel-delivery`);
+
+      toast.success(`Item #${id} deletado com sucesso`);
+    } catch (err) {
+      toast.error("Ocorreu um erro ao tentar excluir a item");
+    }
+  }
+
+  function confirmDelete() {
+    confirmAlert({
+      title: "Alerta",
+      message: `Tem certeza que deseja deletar a encomenda pertecente ao problea ${id}?`,
+      closeOnEscape: false,
+      closeOnClickOutside: false,
+      buttons: [
+        {
+          label: "Sim",
+          onClick: () => handleDelete()
+        },
+        {
+          label: "Não"
+        }
+      ]
+    });
   }
 
   return (
@@ -20,13 +52,13 @@ export default function Action() {
       </button>
       <TableAction visible={visible}>
         <div>
-          <Link to="/">
+          <button type="button" onClick={() => handleToggleOpenModal()}>
             <MdVisibility size={18} color="#8E5BE8" />
             Visualizar
-          </Link>
+          </button>
         </div>
         <div>
-          <button type="button">
+          <button type="button" onClick={confirmDelete}>
             <MdDeleteForever size={18} color="#DE3B3B" />
             Cancelar encomenda
           </button>
@@ -35,3 +67,8 @@ export default function Action() {
     </Container>
   );
 }
+
+Action.propTypes = {
+  handleToggleOpenModal: PropTypes.func.isRequired,
+  id: PropTypes.number.isRequired
+};

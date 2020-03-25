@@ -32,7 +32,6 @@ export default function Routes() {
 
       <Route path="/problems" component={ProblemList} isPrivate />
       <Route path="/problem/new" component={ProblemForm} isPrivate />
-      <Route path="/problem/edit/id" component={ProblemForm} isPrivate />
 
       <Route path="/" component={() => <h1>404</h1>} />
     </Switch>
