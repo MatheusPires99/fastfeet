@@ -16,13 +16,7 @@ import { TableAction } from "~/components/Table";
 
 import { Container } from "./styles";
 
-export default function Action({
-  page,
-  handleToggleOpenModal,
-  id,
-  orders,
-  setOrders
-}) {
+export default function Action({ page, handleToggleOpenModal, id }) {
   const [visible, setVisible] = useState(false);
 
   function handleVisible() {
@@ -32,11 +26,6 @@ export default function Action({
   async function handleDelete() {
     try {
       await api.delete(`/orders/${id}`);
-
-      // eslint-disable-next-line react/prop-types
-      const orderFilter = orders.filter(e => e.id !== id);
-
-      setOrders(orderFilter);
 
       toast.success(`Item #${id} deletado com sucesso`);
     } catch (err) {
@@ -95,7 +84,5 @@ export default function Action({
 Action.propTypes = {
   page: PropTypes.string.isRequired,
   handleToggleOpenModal: PropTypes.func.isRequired,
-  id: PropTypes.number.isRequired,
-  orders: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  setOrders: PropTypes.func.isRequired
+  id: PropTypes.number.isRequired
 };

@@ -46,7 +46,7 @@ export const Content = styled.div`
       height: 45px;
       padding: 0 15px;
       margin: 0 0 15px;
-      transition: border-color 0.2s;
+      transition: box-shadow 0.1s, border-color 0.1s;
 
       &::placeholder {
         color: #999;
@@ -54,6 +54,7 @@ export const Content = styled.div`
 
       &:focus {
         border-color: #7d40e7;
+        box-shadow: 0 0 0 1px #7d40e7;
       }
     }
 

@@ -16,10 +16,11 @@ export const Container = styled.div`
     border-radius: 4px;
     padding: 12px 15px;
     color: #666;
-    transition: border-color 0.2s;
+    transition: box-shadow 0.1s, border-color 0.1s;
 
     &:focus {
       border-color: #7d40e7;
+      box-shadow: 0 0 0 1px #7d40e7;
     }
 
     &::placeholder {

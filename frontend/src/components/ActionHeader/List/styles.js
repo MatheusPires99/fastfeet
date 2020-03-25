@@ -48,10 +48,11 @@ export const SearchBar = styled.div`
     padding: 10px 10px 10px 40px;
     border-radius: 4px;
     border: 1px solid #ddd;
-    transition: border-color 0.2s;
+    transition: box-shadow 0.1s, border-color 0.1s;
 
     &:focus {
       border-color: #7d40e7;
+      box-shadow: 0 0 0 1px #7d40e7;
     }
 
     &::placeholder {
