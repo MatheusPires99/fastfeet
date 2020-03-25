@@ -22,7 +22,7 @@ export default function DeliverymanForm({ match }) {
   useEffect(() => {
     if (id) {
       // eslint-disable-next-line no-inner-declarations
-      async function loadOrderDetails() {
+      async function loadDeliverymanDetails() {
         try {
           setLoading(true);
 
@@ -36,7 +36,7 @@ export default function DeliverymanForm({ match }) {
           toast.error("Falha ao carregar dados");
         }
       }
-      loadOrderDetails();
+      loadDeliverymanDetails();
     }
   }, [id]);
 
