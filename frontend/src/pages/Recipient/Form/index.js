@@ -60,7 +60,7 @@ export default function RecipientForm({ match }) {
         complement: Yup.string(),
         city: Yup.string().required("A cidade do destinatário é obrigatório"),
         state: Yup.string().required("O estado do destinatário é obrigatório"),
-        cep: Yup.number().required("O CEP do destinatário é obrigatório")
+        cep: Yup.string().required("O CEP do destinatário é obrigatório")
       });
 
       await schema.validate(data, {

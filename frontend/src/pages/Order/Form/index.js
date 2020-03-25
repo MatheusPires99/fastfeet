@@ -114,8 +114,8 @@ export default function OrderForm({ match }) {
       }
 
       if (!id) {
-        deliveryman_id = selectedDeliveryman;
-        recipient_id = selectedRecipient;
+        deliveryman_id = selectedDeliveryman.id;
+        recipient_id = selectedRecipient.id;
 
         const data = { product, deliveryman_id, recipient_id };
 
