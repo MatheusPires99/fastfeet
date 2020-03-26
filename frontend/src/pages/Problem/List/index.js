@@ -1,31 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import Modal from "react-modal";
 
 import api from "~/services/api";
 
 import { HeaderList } from "~/components/ActionHeader";
-import { TableContainer, TableDetails, TableLoading } from "~/components/Table";
+import { TableContainer, TableLoading } from "~/components/Table";
 import Action from "./Action";
+import Details from "./Details";
 import Pagination from "~/components/Pagination";
 
-import { ModalTags } from "./styles";
-
 export default function ProblemList() {
-  Modal.setAppElement("#root");
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [problems, setProblems] = useState([]);
+  const [problemDetail, setProblemDetail] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(null);
   const [totalProblems, setTotalProblems] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const customStyles = {
-    overlay: {
-      zIndex: 2
-    }
-  };
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     async function loadProblems() {
@@ -53,10 +44,6 @@ export default function ProblemList() {
     loadProblems();
   }, [currentPage]);
 
-  function handleToggleOpenModal() {
-    setModalIsOpen(!modalIsOpen);
-  }
-
   function handlePage(page) {
     if (page === 0) {
       setCurrentPage(1);
@@ -65,6 +52,15 @@ export default function ProblemList() {
     } else {
       setCurrentPage(page);
     }
+  }
+
+  function handleVisible() {
+    setVisible(!visible);
+  }
+
+  function handleDetails(problem) {
+    setProblemDetail(problem);
+    handleVisible();
   }
 
   return (
@@ -95,25 +91,20 @@ export default function ProblemList() {
                   <td>#{problem.order.id}</td>
                   <td>{problem.description}</td>
                   <Action
-                    handleToggleOpenModal={handleToggleOpenModal}
+                    handleDetails={() => handleDetails(problem)}
                     id={problem.id}
+                    problem={problemDetail}
                   />
-                  <TableDetails
-                    isOpen={modalIsOpen}
-                    onRequestClose={handleToggleOpenModal}
-                    style={customStyles}
-                  >
-                    <ModalTags>
-                      <div>
-                        <strong>VISUALIZAR PROBLEMA</strong>
-                        <p>{problem.description}</p>
-                      </div>
-                    </ModalTags>
-                  </TableDetails>
                 </tr>
               ))}
             </tbody>
           </TableContainer>
+
+          <Details
+            visible={visible}
+            problem={problemDetail}
+            handleVisible={handleVisible}
+          />
 
           <Pagination
             currentPage={currentPage}

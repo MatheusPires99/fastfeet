@@ -23,17 +23,11 @@ export const Container = styled.div`
   }
 
   form {
-    padding: 15px;
+    padding: 0 15px 15px;
 
     div {
       display: flex;
       flex-direction: column;
-
-      & + div {
-        margin-top: 15px;
-        border-top: 1px solid #eee;
-        padding-top: 15px;
-      }
     }
 
     strong {
@@ -41,24 +35,11 @@ export const Container = styled.div`
       color: #444;
     }
 
-    span {
+    textarea {
+      font-size: 16px;
       color: #666;
+      border: 0;
+      resize: unset;
     }
-  }
-
-  input {
-    border: none;
-    background: none;
-  }
-`;
-
-export const Date = styled.div`
-  flex-direction: row !important;
-  margin-top: 0 !important;
-  border-top: 0 !important;
-  padding-top: 0 !important;
-
-  input {
-    margin-left: 5px;
   }
 `;

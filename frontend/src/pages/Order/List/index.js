@@ -5,7 +5,8 @@ import { format, parseISO } from "date-fns";
 import api from "~/services/api";
 
 import { HeaderList } from "~/components/ActionHeader";
-import { TableContainer, TableDetails, TableLoading } from "~/components/Table";
+import { TableContainer, TableLoading } from "~/components/Table";
+import Details from "./Details";
 import Action from "./Action";
 import Pagination from "~/components/Pagination";
 
@@ -155,7 +156,7 @@ export default function OrderList() {
                   </Status>
                   <Action
                     page={`order/edit/${order.id}`}
-                    handleDetails={handleDetails}
+                    handleDetails={() => handleDetails(order)}
                     id={order.id}
                     order={orderDetail}
                   />
@@ -164,7 +165,7 @@ export default function OrderList() {
             </tbody>
           </TableContainer>
 
-          <TableDetails
+          <Details
             visible={visible}
             order={orderDetail}
             handleVisible={handleVisible}

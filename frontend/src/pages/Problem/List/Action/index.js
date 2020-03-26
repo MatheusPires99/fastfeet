@@ -10,7 +10,7 @@ import { TableAction } from "~/components/Table";
 
 import { Container } from "./styles";
 
-export default function Action({ handleToggleOpenModal, id }) {
+export default function Action({ handleDetails, problem, id }) {
   const [visible, setVisible] = useState(false);
 
   function handleVisible() {
@@ -52,7 +52,7 @@ export default function Action({ handleToggleOpenModal, id }) {
       </button>
       <TableAction visible={visible}>
         <div>
-          <button type="button" onClick={() => handleToggleOpenModal()}>
+          <button type="button" onClick={() => handleDetails(problem)}>
             <MdVisibility size={18} color="#8E5BE8" />
             Visualizar
           </button>
@@ -69,6 +69,7 @@ export default function Action({ handleToggleOpenModal, id }) {
 }
 
 Action.propTypes = {
-  handleToggleOpenModal: PropTypes.func.isRequired,
+  handleDetails: PropTypes.func.isRequired,
+  problem: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   id: PropTypes.number.isRequired
 };

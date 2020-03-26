@@ -7,8 +7,6 @@ import { MdClose } from "react-icons/md";
 import { Container, Date } from "./styles";
 
 export default function Details({ visible, order, handleVisible }) {
-  console.tron.log(order);
-
   return (
     <>
       <Container visible={visible}>
@@ -24,16 +22,19 @@ export default function Details({ visible, order, handleVisible }) {
           <div>
             <strong>Datas</strong>
             <Date>
-              <span>Retirada: </span>
+              <strong>Retirada: </strong>
               <Input name="start_date_formatted" readOnly />
             </Date>
             <Date>
-              <span>Entrega: </span>
+              <strong>Entrega: </strong>
               <Input name="end_date" readOnly />
             </Date>
           </div>
           <div>
             <strong>Assinatura do destinatário</strong>
+            {order.signature && (
+              <img src={order.signature.url} alt="assinatura" />
+            )}
           </div>
         </Form>
       </Container>
