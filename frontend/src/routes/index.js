@@ -7,7 +7,7 @@ import SignIn from "../pages/SignIn";
 import { OrderList, OrderForm } from "../pages/Order";
 import { DeliverymanList, DeliverymanForm } from "../pages/Deliveryman";
 import { RecipientList, RecipientForm } from "../pages/Recipient";
-import { ProblemList, ProblemForm } from "../pages/Problem";
+import ProblemList from "../pages/Problem/List";
 
 export default function Routes() {
   return (
@@ -31,7 +31,6 @@ export default function Routes() {
       <Route path="/recipient/edit/:id" component={RecipientForm} isPrivate />
 
       <Route path="/problems" component={ProblemList} isPrivate />
-      <Route path="/problem/new" component={ProblemForm} isPrivate />
 
       <Route path="/" component={() => <h1>404</h1>} />
     </Switch>

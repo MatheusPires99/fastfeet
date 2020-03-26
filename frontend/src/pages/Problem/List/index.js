@@ -83,6 +83,7 @@ export default function ProblemList() {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>ID da encomenda</th>
                 <th>Problema</th>
                 <th>Ações</th>
               </tr>
@@ -91,6 +92,7 @@ export default function ProblemList() {
               {problems.map(problem => (
                 <tr key={problem.id}>
                   <td>#{problem.id}</td>
+                  <td>#{problem.order.id}</td>
                   <td>{problem.description}</td>
                   <Action
                     handleToggleOpenModal={handleToggleOpenModal}

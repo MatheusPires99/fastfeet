@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import Modal from "react-modal";
+import { format, parseISO } from "date-fns";
 
 import api from "~/services/api";
 
@@ -9,24 +9,17 @@ import { TableContainer, TableDetails, TableLoading } from "~/components/Table";
 import Action from "./Action";
 import Pagination from "~/components/Pagination";
 
-import { ModalTags, Status } from "./styles";
+import { Status } from "./styles";
 
 export default function OrderList() {
-  Modal.setAppElement("#root");
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [orderDetail, setOrderDetail] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(null);
   const [search, setSearch] = useState("");
   const [totalOrders, setTotalOrders] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const customStyles = {
-    overlay: {
-      zIndex: 2
-    }
-  };
+  const [visible, setVisible] = useState(false);
 
   const getFormattedStatus = order => {
     let status = {};
@@ -64,7 +57,15 @@ export default function OrderList() {
         const data = response.data.docs.map(order => {
           return {
             ...order,
-            formattedStatus: getFormattedStatus(order)
+            formattedStatus: getFormattedStatus(order),
+            street_number: `${order.recipient.street}, ${order.recipient.number}`,
+            city_state: `${order.recipient.city} - ${order.recipient.state}`,
+            start_date_formatted: order.start_date
+              ? format(parseISO(order.start_date), "dd/MM/yyyy")
+              : null,
+            end_date_formatted: order.end_date
+              ? format(parseISO(order.end_date), "dd/MM/yyyy")
+              : null
           };
         });
 
@@ -85,10 +86,6 @@ export default function OrderList() {
     loadOrders();
   }, [currentPage, search]);
 
-  function handleToggleOpenModal() {
-    setModalIsOpen(!modalIsOpen);
-  }
-
   function handlePage(page) {
     if (page === 0) {
       setCurrentPage(1);
@@ -97,6 +94,15 @@ export default function OrderList() {
     } else {
       setCurrentPage(page);
     }
+  }
+
+  function handleVisible() {
+    setVisible(!visible);
+  }
+
+  function handleDetails(order) {
+    setOrderDetail(order);
+    handleVisible();
   }
 
   return (
@@ -149,47 +155,20 @@ export default function OrderList() {
                   </Status>
                   <Action
                     page={`order/edit/${order.id}`}
-                    handleToggleOpenModal={handleToggleOpenModal}
+                    handleDetails={handleDetails}
                     id={order.id}
-                    orders={orders}
-                    setOrders={setOrders}
+                    order={orderDetail}
                   />
-                  <TableDetails
-                    isOpen={modalIsOpen}
-                    onRequestClose={handleToggleOpenModal}
-                    style={customStyles}
-                  >
-                    <ModalTags>
-                      <div>
-                        <strong>Informações da encomenda</strong>
-                        <span>
-                          {order.recipient.street}, {order.recipient.number}
-                        </span>
-                        <span>
-                          {order.recipient.city} - {order.recipient.state}
-                        </span>
-                        <span>{order.recipient.zip_code}</span>
-                      </div>
-                      <div>
-                        <strong>Datas</strong>
-                        <span>
-                          Retirada:{" "}
-                          {order.start_date ? order.start_date : "Não retirado"}
-                        </span>
-                        <span>
-                          Entrega:{" "}
-                          {order.end_date ? order.end_date : "Não entregue"}
-                        </span>
-                      </div>
-                      <div>
-                        <strong>Assinatura do destinatário</strong>
-                      </div>
-                    </ModalTags>
-                  </TableDetails>
                 </tr>
               ))}
             </tbody>
           </TableContainer>
+
+          <TableDetails
+            visible={visible}
+            order={orderDetail}
+            handleVisible={handleVisible}
+          />
 
           <Pagination
             currentPage={currentPage}

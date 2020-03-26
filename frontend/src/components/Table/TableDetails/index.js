@@ -1,18 +1,48 @@
-import styled from "styled-components";
-import Modal from "react-modal";
+import React from "react";
+import { Form, Input } from "@rocketseat/unform";
+import PropTypes from "prop-types";
 
-const TableDetails = styled(Modal)`
-  display: ${props => (props.isOpen ? "flex" : "none")};
-  flex-direction: column;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 450px;
-  padding: 25px;
-  box-shadow: 10px 10px 10px 10000px rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
-  z-index: 2;
-`;
+import { MdClose } from "react-icons/md";
 
-export default TableDetails;
+import { Container, Date } from "./styles";
+
+export default function Details({ visible, order, handleVisible }) {
+  console.tron.log(order);
+
+  return (
+    <>
+      <Container visible={visible}>
+        <MdClose size={18} color="#DE3B3B" onClick={() => handleVisible()} />
+
+        <Form initialData={order}>
+          <div>
+            <strong>Informações da encomenda</strong>
+            <Input name="street_number" readOnly />
+            <Input name="city_state" readOnly />
+            <Input name="recipient.cep" readOnly />
+          </div>
+          <div>
+            <strong>Datas</strong>
+            <Date>
+              <span>Retirada: </span>
+              <Input name="start_date_formatted" readOnly />
+            </Date>
+            <Date>
+              <span>Entrega: </span>
+              <Input name="end_date" readOnly />
+            </Date>
+          </div>
+          <div>
+            <strong>Assinatura do destinatário</strong>
+          </div>
+        </Form>
+      </Container>
+    </>
+  );
+}
+
+Details.propTypes = {
+  visible: PropTypes.bool.isRequired,
+  order: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+  handleVisible: PropTypes.func.isRequired
+};

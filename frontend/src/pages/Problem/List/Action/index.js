@@ -30,7 +30,7 @@ export default function Action({ handleToggleOpenModal, id }) {
   function confirmDelete() {
     confirmAlert({
       title: "Alerta",
-      message: `Tem certeza que deseja deletar a encomenda pertecente ao problea ${id}?`,
+      message: `Tem certeza que deseja cancelar a encomenda pertecente ao problema ${id}?`,
       closeOnEscape: false,
       closeOnClickOutside: false,
       buttons: [

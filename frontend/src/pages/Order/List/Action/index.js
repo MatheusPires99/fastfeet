@@ -16,7 +16,7 @@ import { TableAction } from "~/components/Table";
 
 import { Container } from "./styles";
 
-export default function Action({ page, handleToggleOpenModal, id }) {
+export default function Action({ page, handleDetails, order, id }) {
   const [visible, setVisible] = useState(false);
 
   function handleVisible() {
@@ -59,7 +59,7 @@ export default function Action({ page, handleToggleOpenModal, id }) {
 
       <TableAction visible={visible}>
         <div>
-          <button type="button" onClick={() => handleToggleOpenModal()}>
+          <button type="button" onClick={() => handleDetails(order)}>
             <MdVisibility size={18} color="#8E5BE8" />
             Visualizar
           </button>
@@ -83,6 +83,7 @@ export default function Action({ page, handleToggleOpenModal, id }) {
 
 Action.propTypes = {
   page: PropTypes.string.isRequired,
-  handleToggleOpenModal: PropTypes.func.isRequired,
+  handleDetails: PropTypes.func.isRequired,
+  order: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   id: PropTypes.number.isRequired
 };
