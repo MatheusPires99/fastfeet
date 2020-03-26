@@ -54,13 +54,13 @@ export default function RecipientForm({ match }) {
       const schema = Yup.object().shape({
         name: Yup.string().required("O nome do destinatário é obrigatório"),
         street: Yup.string().required("A rua do destinatário é obrigatório"),
-        number: Yup.number("Certifique-se que um número foi digitado").required(
-          "O número do destinatário é obrigatório"
-        ),
+        number: Yup.string().required("O número do destinatário é obrigatório"),
         complement: Yup.string(),
         city: Yup.string().required("A cidade do destinatário é obrigatório"),
         state: Yup.string().required("O estado do destinatário é obrigatório"),
-        cep: Yup.string().required("O CEP do destinatário é obrigatório")
+        cep: Yup.string()
+          .min(9, "O CEP deve ter no mínimo 9 digitos")
+          .required("O CEP do destinatário é obrigatório")
       });
 
       await schema.validate(data, {
