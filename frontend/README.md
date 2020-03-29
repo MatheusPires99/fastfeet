@@ -35,17 +35,47 @@ Por fim temos uma tela de perfil para edição completa dos dados.
 ## :computer: Resultado:
 
 ### Login
-![ReactJS-Arquitetura Flux](.github/signIn.png)
+![FastFeet](.github/login.png)
 
-### Cadastro
-![ReactJS-Arquitetura Flux](.github/signUp.png)
+### Listagem de encomendas
+![FastFeet](.github/order_list.png)
 
-### Agenda
-![ReactJS-Arquitetura Flux](.github/schedule.png)
+### Formulário para cadastro de encomendas
+![FastFeet](.github/order_form_new.png)
 
-### Perfil
-![ReactJS-Arquitetura Flux](.github/profile.png)
+### Formulário para edição de encomendas
+![FastFeet](.github/order_form_edit.png)
 
-### Notificações
-![ReactJS-Arquitetura Flux](.github/notifications.png)
+### Ações na listagem de ecomendas
+![FastFeet](.github/order_list_action.png)
+
+### Detalhes da encomenda
+![FastFeet](.github/order_list_details.png)
+
+### Listagem de entregadores
+![FastFeet](.github/deliveryman_list.png)
+
+### Formulário para cadastro de entregadores
+![FastFeet](.github/deliveryman_form_new.png)
+
+### Formulário para edição de entregadores
+![FastFeet](.github/deliveryman_form_edit.png)
+
+### Listagem de destinatários
+![FastFeet](.github/recipient_list.png)
+
+### Formulário para cadastro de destinatários
+![FastFeet](.github/recipient_form_new.png)
+
+### Formulário para cadastro de destinatários
+![FastFeet](.github/recipient_form_edit.png)
+
+### Listagem de problemas
+![FastFeet](.github/order_problem_list.png)
+
+### Ações na listagem de problemas
+![FastFeet](.github/order_problem_action.png)
+
+### Detalhes do problema
+![FastFeet](.github/order_problem_details.png)
 
