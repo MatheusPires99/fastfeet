@@ -9,16 +9,51 @@ class RecipientController {
 
     const { docs, pages, total } = await Recipient.paginate({
       where: {
+        status: true,
         name: {
           [Op.like]: `%${name}%`,
         },
       },
+      attributes: [
+        "id",
+        "name",
+        "street",
+        "number",
+        "complement",
+        "city",
+        "state",
+        "cep",
+        "status",
+      ],
       paginate: 10,
       page,
       order: [["id", "DESC"]],
     });
 
     return res.json({ docs, page, pages, total });
+  }
+
+  async show(req, res) {
+    const recipient = await Recipient.findByPk(req.params.id, {
+      where: { status: true },
+      attributes: [
+        "id",
+        "name",
+        "street",
+        "number",
+        "complement",
+        "city",
+        "state",
+        "cep",
+        "status",
+      ],
+    });
+
+    if (!recipient) {
+      return res.status(400).json({ error: "Recipient not found" });
+    }
+
+    return res.json(recipient);
   }
 
   async store(req, res) {
@@ -77,7 +112,7 @@ class RecipientController {
       return res.status(400).json({ error: "Field validation fails" });
     }
 
-    const recipient = await Recipient.findByPk(req.body.id);
+    const recipient = await Recipient.findByPk(req.params.id);
 
     const {
       id,
@@ -99,6 +134,24 @@ class RecipientController {
       complement,
       city,
       state,
+    });
+  }
+
+  async delete(req, res) {
+    const recipient = await Recipient.findByPk(req.params.id, {
+      where: { status: true },
+    });
+
+    if (!recipient) {
+      return res.status(400).json({ error: "Recipient not found" });
+    }
+
+    recipient.status = false;
+
+    await recipient.save();
+
+    return res.status(200).json({
+      message: `${recipient.name} deleted with success`,
     });
   }
 }

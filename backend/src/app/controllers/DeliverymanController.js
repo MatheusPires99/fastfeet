@@ -10,11 +10,12 @@ class DeliverymanController {
 
     const { docs, pages, total } = await Deliveryman.paginate({
       where: {
+        status: true,
         name: {
           [Op.like]: `%${name}%`,
         },
       },
-      attributes: ["id", "name", "email"],
+      attributes: ["id", "name", "email", "status"],
       paginate: 10,
       page,
       order: [["id", "DESC"]],
@@ -32,6 +33,7 @@ class DeliverymanController {
 
   async show(req, res) {
     const deliveryman = await Deliveryman.findByPk(req.params.id, {
+      where: { status: true },
       attributes: ["id", "name", "email"],
       include: [
         {
@@ -128,7 +130,9 @@ class DeliverymanController {
       return res.status(400).json({ error: "Deliveryman not found" });
     }
 
-    await deliveryman.destroy(deliveryman);
+    deliveryman.status = false;
+
+    await deliveryman.save();
 
     return res.status(200).json({
       message: `${deliveryman.name} deleted with success`,

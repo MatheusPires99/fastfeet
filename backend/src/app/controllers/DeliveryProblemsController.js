@@ -10,8 +10,13 @@ import Queue from "../../lib/Queue";
 
 class DeliveryProblemsController {
   async index(req, res) {
-    const problems = await DeliveryProblems.findAll({
+    const { page = 1 } = req.query;
+
+    const { docs, pages, total } = await DeliveryProblems.paginate({
       attributes: ["id", "description"],
+      order: [["id", "DESC"]],
+      paginate: 10,
+      page,
       include: [
         {
           model: Order,
@@ -33,11 +38,11 @@ class DeliveryProblemsController {
       ],
     });
 
-    if (!problems) {
+    if (!docs) {
       return res.status(400).json({ error: "None delivery problems found" });
     }
 
-    return res.json(problems);
+    return res.json({ docs, page, pages, total });
   }
 
   async show(req, res) {
@@ -87,7 +92,7 @@ class DeliveryProblemsController {
 
     const order = await Order.findOne({
       where: { id: order_id, canceled_at: null },
-      attributes: ["id", "product"],
+      attributes: ["id", "product", "canceled_at"],
       include: [
         {
           model: Recipient,

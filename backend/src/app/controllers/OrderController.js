@@ -81,9 +81,6 @@ class OrderController {
           model: Deliveryman,
           as: "deliveryman",
           attributes: ["id", "name", "email"],
-          where: {
-            status: true,
-          },
           include: [
             {
               model: File,
@@ -208,6 +205,8 @@ class OrderController {
     }
 
     order.canceled_at = new Date();
+
+    order.status = false;
 
     await order.save();
 
