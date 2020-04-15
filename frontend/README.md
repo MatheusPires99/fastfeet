@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="FastFeet" src="src/assets/logo.svg" width="350px" />
+  <img alt="FastFeet" src="src/assets/logo.svg" width="400px" />
 </h1>
 
 <h3 align="center">
